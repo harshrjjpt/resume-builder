@@ -1,13 +1,13 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Plus } from "lucide-react";
-import type { ApplicationStatus } from "@prisma/client";
-import { createApplication, moveApplication } from "@/app/actions/applications";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
+type ApplicationStatus = "applied" | "interview" | "offer" | "rejected";
 
 const columns: { id: ApplicationStatus; label: string }[] = [
   { id: "applied", label: "Applied" },
@@ -21,6 +21,17 @@ interface ApplicationItem {
   company: string;
   role: string;
   status: ApplicationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+const STORAGE_KEY = "hireloom:applications";
+
+function createId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
 function Card({ item }: { item: ApplicationItem }) {
@@ -49,7 +60,7 @@ function Column({
       accept: "APP_CARD",
       drop: (item: ApplicationItem) => onDropCard(item.id, id)
     }),
-    [id]
+    [id, onDropCard]
   );
 
   return (
@@ -64,10 +75,29 @@ function Column({
   );
 }
 
-export function ApplicationsKanban({ applications }: { applications: ApplicationItem[] }) {
+export function ApplicationsKanban() {
+  const [applications, setApplications] = useState<ApplicationItem[]>([]);
+  const [hydrated, setHydrated] = useState(false);
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
-  const [pending, startTransition] = useTransition();
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as ApplicationItem[];
+        if (Array.isArray(parsed)) setApplications(parsed);
+      }
+    } catch {
+      // Ignore invalid local storage data.
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(applications));
+  }, [hydrated, applications]);
 
   const grouped = useMemo(
     () =>
@@ -78,22 +108,35 @@ export function ApplicationsKanban({ applications }: { applications: Application
     [applications]
   );
 
+  const addApplication = () => {
+    const c = company.trim();
+    const r = role.trim();
+    if (!c || !r) return;
+
+    const now = new Date().toISOString();
+    setApplications((prev) => [
+      { id: createId(), company: c, role: r, status: "applied", createdAt: now, updatedAt: now },
+      ...prev
+    ]);
+    setCompany("");
+    setRole("");
+  };
+
+  const moveApplication = (applicationId: string, status: ApplicationStatus) => {
+    setApplications((prev) =>
+      prev.map((app) =>
+        app.id === applicationId ? { ...app, status, updatedAt: new Date().toISOString() } : app
+      )
+    );
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="space-y-5">
-        <div className="rounded-2xl border bg-card p-4 flex gap-2">
+        <div className="rounded-2xl border bg-card p-4 flex gap-2 flex-col sm:flex-row">
           <Input placeholder="Company" value={company} onChange={(e) => setCompany(e.target.value)} />
           <Input placeholder="Role" value={role} onChange={(e) => setRole(e.target.value)} />
-          <Button
-            onClick={() =>
-              startTransition(async () => {
-                if (!company || !role) return;
-                await createApplication(company, role);
-                setCompany("");
-                setRole("");
-              })
-            }
-          >
+          <Button onClick={addApplication}>
             <Plus size={14} /> Add
           </Button>
         </div>
@@ -105,15 +148,10 @@ export function ApplicationsKanban({ applications }: { applications: Application
               id={column.id}
               label={column.label}
               items={column.items}
-              onDropCard={(applicationId, status) =>
-                startTransition(async () => {
-                  await moveApplication(applicationId, status);
-                })
-              }
+              onDropCard={moveApplication}
             />
           ))}
         </div>
-        {pending && <p className="text-xs text-muted-foreground">Updating board...</p>}
       </div>
     </DndProvider>
   );
