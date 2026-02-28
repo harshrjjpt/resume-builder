@@ -4,6 +4,8 @@ import type { ResumeBlock } from "@/types";
 import { getActiveUserId } from "@/lib/active-user";
 import { localGetResume } from "@/lib/local-store";
 
+export const dynamic = "force-dynamic";
+
 export default async function BuilderPage({ params }: { params: { id: string } }) {
   const userId = await getActiveUserId();
   const resume = localGetResume(userId, params.id);
