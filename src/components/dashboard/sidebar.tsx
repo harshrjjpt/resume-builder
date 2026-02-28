@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, LayoutTemplate, Home } from "lucide-react";
+import { LayoutTemplate, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/ui/brand-logo";
 
 const items = [
   { href: "/dashboard", icon: Home, label: "Resumes" },
@@ -17,7 +18,7 @@ export function Sidebar() {
     <>
       <div className="xl:hidden border-b bg-card/80 px-3 py-2">
         <div className="mb-2 h-10 rounded-xl gradient-cta text-white flex items-center px-3 font-semibold">
-          <FileText size={15} className="mr-2" /> ResumeAI
+          <BrandLogo light />
         </div>
         <nav className="grid grid-cols-2 gap-1">
           {items.map((item) => (
@@ -36,7 +37,7 @@ export function Sidebar() {
       </div>
       <aside className="hidden xl:block w-64 border-r bg-card/70 backdrop-blur-sm p-4">
         <div className="h-11 rounded-2xl gradient-cta text-white flex items-center px-3 font-semibold">
-          <FileText size={16} className="mr-2" /> ResumeAI
+          <BrandLogo light />
         </div>
         <nav className="mt-5 space-y-1">
           {items.map((item) => (

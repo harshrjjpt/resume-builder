@@ -39,12 +39,12 @@ type LocalState = {
 
 declare global {
   // eslint-disable-next-line no-var
-  var __resumeai_local_state: LocalState | undefined;
+  var __hireloom_local_state: LocalState | undefined;
 }
 
 const state: LocalState =
-  global.__resumeai_local_state ||
-  (global.__resumeai_local_state = {
+  global.__hireloom_local_state ||
+  (global.__hireloom_local_state = {
     resumes: [],
     versions: [],
     applications: []

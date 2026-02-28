@@ -1,4 +1,4 @@
-# ResumeAI Premium (Next.js)
+# HireLoom (Next.js)
 
 Production-oriented AI Resume Builder SaaS built with Next.js App Router, TypeScript, Tailwind, Prisma, NextAuth, Zustand, Framer Motion, TipTap-ready editor structure, and React DnD.
 

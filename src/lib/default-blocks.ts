@@ -45,7 +45,7 @@ export function getDefaultBlocks(): ResumeBlock[] {
       type: "projects",
       order: 3,
       content: {
-        title: "ResumeAI",
+        title: "HireLoom",
         description:
           "AI-first resume builder with ATS scoring, tailored bullet generation, and shareable public resume links.",
         link: "https://example.com"

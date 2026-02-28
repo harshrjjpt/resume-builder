@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { hasDatabase } from "@/lib/runtime";
 
-const GUEST_EMAIL = "guest@resumeai.local";
+const GUEST_EMAIL = "guest@hireloom.local";
 const LOCAL_GUEST_ID = "guest-local";
 
 export async function getActiveUserId() {

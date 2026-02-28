@@ -189,7 +189,7 @@ function ProjectsForm({ block }: { block: ResumeBlockType }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <Field label="Project Name" value={String(c.title ?? "")} onChange={(v) => upd("title", v)} placeholder="ResumeAI" />
+      <Field label="Project Name" value={String(c.title ?? "")} onChange={(v) => upd("title", v)} placeholder="HireLoom" />
       <Field label="Description" value={String(c.description ?? "")} onChange={(v) => upd("description", v)} placeholder="AI-powered resume builder…" multiline />
       <Field label="Link / URL" value={String(c.link ?? "")} onChange={(v) => upd("link", v)} placeholder="github.com/you/project" />
     </div>

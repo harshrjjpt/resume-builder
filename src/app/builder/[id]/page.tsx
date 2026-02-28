@@ -18,14 +18,14 @@ export default async function BuilderPage({ params }: { params: { id: string } }
 
   if (!resume) notFound();
 
-  const blocks: ResumeBlock[] = hasDatabase
+  const blocks = (hasDatabase
     ? resume.blocks.map((b) => ({
         id: b.id,
         type: b.type as ResumeBlock["type"],
-        content: b.content as Record<string, unknown>,
+        content: (b.content && typeof b.content === "object" ? b.content : {}) as Record<string, unknown>,
         order: b.order
       }))
-    : resume.blocks;
+    : resume.blocks) as ResumeBlock[];
 
   return (
     <BuilderClient

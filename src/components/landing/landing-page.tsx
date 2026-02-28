@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, FileText, Gauge, WandSparkles, Globe2, Download, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { BrandLogo } from "@/components/ui/brand-logo";
 
 const features = [
   { icon: FileText, title: "Block-Based Builder", body: "Compose resumes with drag-and-drop sections and instant preview." },
@@ -19,7 +20,7 @@ export function LandingPage() {
   return (
     <main className="min-h-screen">
       <header className="mx-auto max-w-7xl px-6 py-6 flex items-center justify-between">
-        <p className="font-semibold tracking-tight">ResumeAI</p>
+        <BrandLogo />
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Button asChild variant="gradient" size="sm">
