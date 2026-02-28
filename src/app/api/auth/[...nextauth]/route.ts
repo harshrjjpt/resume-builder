@@ -1,6 +1,28 @@
-import NextAuth from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getAuthOptions, isAuthConfigured } from "@/lib/auth";
 
-const handler = NextAuth(authOptions);
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
-export { handler as GET, handler as POST };
+function authNotConfigured() {
+  return Response.json(
+    {
+      error:
+        "Auth is not configured. Set NEXTAUTH_SECRET and at least one provider credentials pair."
+    },
+    { status: 503 }
+  );
+}
+
+export async function GET(req: Request, ctx: unknown) {
+  if (!isAuthConfigured()) return authNotConfigured();
+  const NextAuth = (await import("next-auth")).default;
+  const handler = NextAuth(getAuthOptions());
+  return handler(req, ctx as never);
+}
+
+export async function POST(req: Request, ctx: unknown) {
+  if (!isAuthConfigured()) return authNotConfigured();
+  const NextAuth = (await import("next-auth")).default;
+  const handler = NextAuth(getAuthOptions());
+  return handler(req, ctx as never);
+}
