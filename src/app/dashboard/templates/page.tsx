@@ -120,16 +120,6 @@ function SectionHeading({ label, template }: { label: string; template: ResumeTe
       </div>
     );
   }
-  if (style === "sidebar-dot") {
-    return (
-      <div className="flex items-center gap-1.5 mb-1.5">
-        <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: accent }} />
-        <span className="text-[8px] font-bold uppercase tracking-[0.16em]" style={{ color: primary, fontFamily: template.typography.headingFont }}>
-          {label}
-        </span>
-      </div>
-    );
-  }
   if (style === "bracket") {
     return (
       <div className="mb-1.5">
@@ -252,24 +242,18 @@ function StaticHeader({ template, variant }: { template: ResumeTemplate; variant
       <header className="text-center pb-5 border-b mb-5" style={{ borderColor: `${primary}22` }}>
         <h3 className={`${template.typography.heading} font-bold leading-none`} style={{ color: primary, fontFamily: headingFont }}>{String(content.name)}</h3>
         <p className="text-[13px] mt-1" style={{ color: template.colors.accent ?? primary, fontFamily: bodyFont }}>{String(content.role)}</p>
+        {(() => {
+          const email = String(content.email ?? "");
+          const location = String(content.location ?? "");
+          return (
         <div className="flex justify-center gap-4 mt-1.5 text-[11px]" style={{ color: muted, fontFamily: bodyFont }}>
-          {content.email && <span>{String(content.email)}</span>}
-          {content.email && content.location && <span>·</span>}
-          {content.location && <span>{String(content.location)}</span>}
+          {email ? <span>{email}</span> : null}
+          {email && location ? <span>·</span> : null}
+          {location ? <span>{location}</span> : null}
         </div>
+          );
+        })()}
         <p className="text-[11px] mt-1.5 max-w-[520px] mx-auto" style={{ color: muted, fontFamily: bodyFont }}>{String(content.summary)}</p>
-      </header>
-    );
-  }
-
-  if (variant === "split") {
-    return (
-      <header className="flex items-start justify-between gap-3 pb-5 border-b mb-5" style={{ borderColor: `${primary}33` }}>
-        <div>
-          <h3 className={`${template.typography.heading} font-bold leading-none`} style={{ color: primary, fontFamily: headingFont }}>{String(content.name)}</h3>
-          <p className="text-[13px] mt-1" style={{ color: template.colors.accent ?? primary, fontFamily: bodyFont }}>{String(content.role)}</p>
-        </div>
-        <p className="text-[11px] text-right max-w-[260px]" style={{ color: muted, fontFamily: bodyFont }}>{String(content.summary)}</p>
       </header>
     );
   }
@@ -279,17 +263,6 @@ function StaticHeader({ template, variant }: { template: ResumeTemplate; variant
       <header className="mb-5">
         <h3 className={`${template.typography.heading} font-bold leading-tight`} style={{ color: headerText, fontFamily: headingFont }}>{String(content.name)}</h3>
         <p className="text-[12px] mt-1" style={{ color: headerText, fontFamily: bodyFont, opacity: 0.85 }}>{String(content.role)}</p>
-      </header>
-    );
-  }
-
-  if (variant === "magazine") {
-    return (
-      <header>
-        <h3 className={`${template.typography.heading} font-black leading-[0.92]`} style={{ color: primary, fontFamily: headingFont }}>{String(content.name)}</h3>
-        <div className="w-8 border-t-4 mt-2 mb-3" style={{ borderColor: template.colors.accent ?? primary }} />
-        <p className="text-[11px] uppercase tracking-[0.18em]" style={{ color: template.colors.accent ?? primary, fontFamily: bodyFont }}>{String(content.role)}</p>
-        <p className="text-[10px] mt-1.5" style={{ color: muted, fontFamily: bodyFont }}>{String(content.summary)}</p>
       </header>
     );
   }
@@ -317,8 +290,6 @@ function TemplateCardPreview({ template }: { template: ResumeTemplate }) {
     content = <div className={template.spacing}>{header && <StaticHeader template={template} variant="default" />}{allNonHeader.map((b) => <StaticBlock key={b.id} block={b} template={template} />)}</div>;
   } else if (layout === "centered-header") {
     content = <div>{header && <StaticHeader template={template} variant="centered" />}<div className={template.spacing}>{allNonHeader.map((b) => <StaticBlock key={b.id} block={b} template={template} />)}</div></div>;
-  } else if (layout === "split-header") {
-    content = <div>{header && <StaticHeader template={template} variant="split" />}<div className={template.spacing}>{allNonHeader.map((b) => <StaticBlock key={b.id} block={b} template={template} />)}</div></div>;
   } else if (layout === "top-banner") {
     content = (
       <div>
@@ -329,13 +300,6 @@ function TemplateCardPreview({ template }: { template: ResumeTemplate }) {
         </div>
       </div>
     );
-  } else if (layout === "two-column") {
-    content = (
-      <div className="grid grid-cols-[1fr_230px] gap-7">
-        <div className={template.spacing}>{header && <StaticHeader template={template} variant="default" />}{mainBlocks.map((b) => <StaticBlock key={b.id} block={b} template={template} />)}</div>
-        <aside className={`${template.spacing} rounded-lg p-5`} style={{ backgroundColor: template.colors.accent ?? "#f8fafc" }}>{sideBlocks.map((b) => <StaticBlock key={b.id} block={b} template={template} />)}</aside>
-      </div>
-    );
   } else if (layout === "sidebar-left") {
     content = (
       <div className="grid grid-cols-[220px_1fr] min-h-[1100px]">
@@ -344,13 +308,6 @@ function TemplateCardPreview({ template }: { template: ResumeTemplate }) {
           <div className={template.spacing}>{sideBlocks.map((b) => <StaticBlock key={b.id} block={b} template={template} />)}</div>
         </aside>
         <div className={`${template.spacing} p-8`}>{mainBlocks.map((b) => <StaticBlock key={b.id} block={b} template={template} />)}</div>
-      </div>
-    );
-  } else if (layout === "magazine") {
-    content = (
-      <div className="grid grid-cols-[280px_1fr] gap-10 items-start">
-        <div>{header && <StaticHeader template={template} variant="magazine" />}</div>
-        <div className={template.spacing}>{allNonHeader.map((b) => <StaticBlock key={b.id} block={b} template={template} />)}</div>
       </div>
     );
   } else {

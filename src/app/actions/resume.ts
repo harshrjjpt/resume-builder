@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { BlockType as PrismaBlockType, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import type { BlockType as PrismaBlockType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getDefaultBlocks } from "@/lib/default-blocks";
 import type { ResumeBlock } from "@/types";

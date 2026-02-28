@@ -6,6 +6,8 @@ import type { ResumeBlock } from "@/types";
 import { TEMPLATES } from "@/lib/templates";
 import type { ResumeTemplate } from "@/types";
 
+const hasValue = (v: unknown): boolean => Boolean(v);
+
 // ─── Font mapping ─────────────────────────────────────────────────────────────
 // @react-pdf/renderer has these built-in fonts (zero network requests needed):
 //   Sans-serif : Helvetica, Helvetica-Bold, Helvetica-Oblique, Helvetica-BoldOblique
@@ -183,7 +185,7 @@ function renderBlock(block: ResumeBlock, ctx: RCtx) {
         <SH label="Projects" color={col} accent={accent} hf={hf} style={sectionStyle} />
         <Text style={{ fontWeight: 700, fontSize: 10, color: col, fontFamily: bf }}>{String(c.title ?? "")}</Text>
         <Text style={{ fontSize: 9, color: mcol, fontFamily: bf, lineHeight: 1.4 }}>{String(c.description ?? "")}</Text>
-        {c.link ? <Text style={{ fontSize: 8.5, color: accent, fontFamily: bf }}>{String(c.link)}</Text> : null}
+        {hasValue(c.link) ? <Text style={{ fontSize: 8.5, color: accent, fontFamily: bf }}>{String(c.link)}</Text> : null}
       </View>
     );
   }
@@ -260,9 +262,9 @@ export function ResumePdfDocument({
               {String(hc.role ?? "")}
             </Text>
             <View style={{ borderBottomWidth: 0.4, borderBottomColor: sidebarText, opacity: 0.3, marginBottom: 9 }} />
-            {hc.email && <Text style={{ fontSize: 8.5, color: `${sidebarText}cc`, fontFamily: bf, marginBottom: 2 }}>{String(hc.email)}</Text>}
-            {hc.phone && <Text style={{ fontSize: 8.5, color: `${sidebarText}cc`, fontFamily: bf, marginBottom: 2 }}>{String(hc.phone)}</Text>}
-            {hc.location && <Text style={{ fontSize: 8.5, color: `${sidebarText}cc`, fontFamily: bf, marginBottom: 11 }}>{String(hc.location)}</Text>}
+            {hasValue(hc.email) && <Text style={{ fontSize: 8.5, color: `${sidebarText}cc`, fontFamily: bf, marginBottom: 2 }}>{String(hc.email)}</Text>}
+            {hasValue(hc.phone) && <Text style={{ fontSize: 8.5, color: `${sidebarText}cc`, fontFamily: bf, marginBottom: 2 }}>{String(hc.phone)}</Text>}
+            {hasValue(hc.location) && <Text style={{ fontSize: 8.5, color: `${sidebarText}cc`, fontFamily: bf, marginBottom: 11 }}>{String(hc.location)}</Text>}
             <View style={{ borderBottomWidth: 0.4, borderBottomColor: sidebarText, opacity: 0.3, marginBottom: 9 }} />
             {sideBlocks.map((b) =>
               renderBlock(b, { ...ctx, primary: sidebarText, muted: `${sidebarText}99`, sidebarText, light: true })
@@ -270,7 +272,7 @@ export function ResumePdfDocument({
           </View>
           {/* Main */}
           <View style={ss.mainCol}>
-            {hc.summary && (
+            {hasValue(hc.summary) && (
               <View style={{ marginBottom: 13 }}>
                 <SH label="Profile" color={primary} accent={accent} hf={hf} style={sectionStyle} />
                 <Text style={{ fontSize: 9, color: muted, fontFamily: bf, lineHeight: 1.5 }}>{String(hc.summary)}</Text>
@@ -349,12 +351,12 @@ export function ResumePdfDocument({
           </View>
           {/* Contact strip */}
           <View style={{ flexDirection: "row", gap: 16, marginBottom: 14, paddingBottom: 8, borderBottomWidth: 0.4, borderBottomColor: `${primary}20` }}>
-            {hc.website && <Text style={{ fontSize: 8, color: muted, fontFamily: bf }}>{String(hc.website)}</Text>}
-            {hc.email && <Text style={{ fontSize: 8, color: muted, fontFamily: bf }}>{String(hc.email)}</Text>}
-            {hc.location && <Text style={{ fontSize: 8, color: muted, fontFamily: bf }}>{String(hc.location)}</Text>}
+            {hasValue(hc.website) && <Text style={{ fontSize: 8, color: muted, fontFamily: bf }}>{String(hc.website)}</Text>}
+            {hasValue(hc.email) && <Text style={{ fontSize: 8, color: muted, fontFamily: bf }}>{String(hc.email)}</Text>}
+            {hasValue(hc.location) && <Text style={{ fontSize: 8, color: muted, fontFamily: bf }}>{String(hc.location)}</Text>}
           </View>
           {/* About me row */}
-          {hc.summary && (
+          {hasValue(hc.summary) && (
             <View style={{ flexDirection: "row", gap: 14, marginBottom: 14 }}>
               <Text style={{ fontSize: 7, fontWeight: 700, color: primary, fontFamily: hf, letterSpacing: 1.4, width: 65, textTransform: "uppercase", paddingTop: 2 }}>About Me</Text>
               <Text style={{ flex: 1, fontSize: 9, color: muted, fontFamily: bf, lineHeight: 1.5 }}>{String(hc.summary)}</Text>
@@ -410,7 +412,7 @@ export function ResumePdfDocument({
               <Text style={{ fontSize: 7.5, color: muted, fontFamily: bf, letterSpacing: 1.8, textTransform: "uppercase", marginBottom: 4 }}>{String(hc.role ?? "")}</Text>
               <Text style={{ fontSize: 32, fontWeight: 700, color: primary, fontFamily: hf, lineHeight: 1.05 }}>{String(hc.name ?? "")}</Text>
             </View>
-            {hc.photo ? (
+            {hasValue(hc.photo) ? (
               <Image
                 src={String(hc.photo)}
                 style={{ width: 52, height: 52, borderRadius: 26, marginLeft: 14, objectFit: "cover" as const }}
@@ -425,16 +427,16 @@ export function ResumePdfDocument({
               {/* Contact */}
               <View style={{ marginBottom: 12 }}>
                 <Text style={{ fontSize: 7, fontWeight: 700, color: primary, fontFamily: hf, letterSpacing: 1.4, textTransform: "uppercase", marginBottom: 5 }}>Contact</Text>
-                {hc.location && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf, marginBottom: 3 }}>⌂ {String(hc.location)}</Text>}
-                {hc.email && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf, marginBottom: 3 }}>✉ {String(hc.email)}</Text>}
-                {hc.phone && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf, marginBottom: 3 }}>✆ {String(hc.phone)}</Text>}
-                {hc.linkedin && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf, marginBottom: 3 }}>⊞ {String(hc.linkedin)}</Text>}
+                {hasValue(hc.location) && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf, marginBottom: 3 }}>⌂ {String(hc.location)}</Text>}
+                {hasValue(hc.email) && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf, marginBottom: 3 }}>✉ {String(hc.email)}</Text>}
+                {hasValue(hc.phone) && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf, marginBottom: 3 }}>✆ {String(hc.phone)}</Text>}
+                {hasValue(hc.linkedin) && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf, marginBottom: 3 }}>⊞ {String(hc.linkedin)}</Text>}
               </View>
               {sideBlocks.map((b) => renderBlock(b, ctx))}
             </View>
             {/* Right main */}
             <View style={{ flex: 1, paddingLeft: 18 }}>
-              {hc.summary && (
+              {hasValue(hc.summary) && (
                 <View style={{ marginBottom: 12 }}>
                   <SH label="Summary" color={primary} accent={accent} hf={hf} style={sectionStyle} />
                   <Text style={{ fontSize: 9, color: muted, fontFamily: bf, lineHeight: 1.5 }}>{String(hc.summary)}</Text>
@@ -462,10 +464,10 @@ export function ResumePdfDocument({
             <Text style={{ fontSize: 26, fontWeight: 700, color: primary, fontFamily: hf, lineHeight: 1.1 }}>{String(hc.name ?? "")}</Text>
             <Text style={{ fontSize: 11, color: accent, fontFamily: bf, marginTop: 2 }}>{String(hc.role ?? "")}</Text>
             <View style={{ flexDirection: "row", gap: 12, marginTop: 3 }}>
-              {hc.email && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf }}>{String(hc.email)}</Text>}
-              {hc.location && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf }}>{String(hc.location)}</Text>}
+              {hasValue(hc.email) && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf }}>{String(hc.email)}</Text>}
+              {hasValue(hc.location) && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf }}>{String(hc.location)}</Text>}
             </View>
-            {hc.summary && <Text style={{ fontSize: 9, color: muted, fontFamily: bf, marginTop: 5, lineHeight: 1.5 }}>{String(hc.summary)}</Text>}
+            {hasValue(hc.summary) && <Text style={{ fontSize: 9, color: muted, fontFamily: bf, marginTop: 5, lineHeight: 1.5 }}>{String(hc.summary)}</Text>}
           </View>
           <View style={{ borderBottomWidth: 0.5, borderBottomColor: primary, opacity: 0.15, marginBottom: 14 }} />
           <View style={{ flexDirection: "row", gap: 24 }}>
@@ -486,10 +488,10 @@ export function ResumePdfDocument({
           <Text style={{ fontSize: 28, fontWeight: 700, color: primary, fontFamily: hf, lineHeight: 1.1 }}>{String(hc.name ?? "")}</Text>
           <Text style={{ fontSize: 11, color: accent, fontFamily: bf, marginTop: 2 }}>{String(hc.role ?? "")}</Text>
           <View style={{ flexDirection: "row", gap: 14, marginTop: 3 }}>
-            {hc.email && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf }}>{String(hc.email)}</Text>}
-            {hc.location && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf }}>{String(hc.location)}</Text>}
+            {hasValue(hc.email) && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf }}>{String(hc.email)}</Text>}
+            {hasValue(hc.location) && <Text style={{ fontSize: 8.5, color: muted, fontFamily: bf }}>{String(hc.location)}</Text>}
           </View>
-          {hc.summary && <Text style={{ fontSize: 9, color: muted, fontFamily: bf, marginTop: 5, lineHeight: 1.5 }}>{String(hc.summary)}</Text>}
+          {hasValue(hc.summary) && <Text style={{ fontSize: 9, color: muted, fontFamily: bf, marginTop: 5, lineHeight: 1.5 }}>{String(hc.summary)}</Text>}
         </View>
         <View style={{ borderBottomWidth: 0.5, borderBottomColor: primary, opacity: 0.15, marginBottom: 14 }} />
         {nonHeader.map((b) => renderBlock(b, ctx))}

@@ -26,7 +26,7 @@ interface ApplicationItem {
 function Card({ item }: { item: ApplicationItem }) {
   const [, drag] = useDrag(() => ({ type: "APP_CARD", item }));
   return (
-    <div ref={drag} className="rounded-xl border bg-card p-3 cursor-move">
+    <div ref={(node) => { drag(node); }} className="rounded-xl border bg-card p-3 cursor-move">
       <p className="text-sm font-medium">{item.company}</p>
       <p className="text-xs text-muted-foreground">{item.role}</p>
     </div>
@@ -53,7 +53,7 @@ function Column({
   );
 
   return (
-    <div ref={drop} className="rounded-2xl border bg-muted/40 p-3 min-h-[420px]">
+    <div ref={(node) => { drop(node); }} className="rounded-2xl border bg-muted/40 p-3 min-h-[420px]">
       <h3 className="text-sm font-semibold mb-3">{label}</h3>
       <div className="space-y-2">
         {items.map((item) => (

@@ -1,7 +1,6 @@
 "use client";
 
 import { create } from "zustand";
-import { v4 as uuid } from "uuid";
 import type { BlockType, ResumeBlock } from "@/types";
 
 interface ResumeState {
@@ -46,6 +45,13 @@ function getDefaultContent(type: BlockType): Record<string, unknown> {
   }
 }
 
+function createId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `id-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
 export const useResumeStore = create<ResumeState>((set, get) => ({
   resumeId: "",
   title: "Untitled Resume",
@@ -67,7 +73,7 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
     const next = [
       ...current,
       {
-        id: uuid(),
+        id: createId(),
         type,
         order: current.length,
         content: { ...getDefaultContent(type), ...(content ?? {}) }
