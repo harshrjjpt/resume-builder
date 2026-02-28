@@ -51,6 +51,17 @@ export async function createResume(title = "Untitled Resume", templateId = "mini
   const userId = await requireUser();
   if (!hasDatabase) return localCreateResume(userId, title, templateId);
   const defaults = getDefaultBlocks();
+  const defaultRows: Prisma.ResumeBlockCreateManyResumeInput[] = defaults.flatMap((b) => {
+    const type = toPrismaBlockType(b.type);
+    if (!type) return [];
+    return [
+      {
+        type,
+        content: toInputJson(b.content),
+        order: b.order
+      }
+    ];
+  });
 
   const resume = await prisma.resume.create({
     data: {
@@ -59,15 +70,7 @@ export async function createResume(title = "Untitled Resume", templateId = "mini
       templateId,
       blocks: {
         createMany: {
-          data: defaults.flatMap((b) => {
-            const type = toPrismaBlockType(b.type);
-            if (!type) return [];
-            return [{
-              type,
-              content: toInputJson(b.content),
-              order: b.order
-            }];
-          })
+          data: defaultRows
         }
       }
     }
@@ -158,15 +161,17 @@ export async function saveResume(resumeId: string, title: string, blocks: Resume
     prisma.resume.update({ where: { id: resumeId }, data: { title, templateId } }),
     prisma.resumeBlock.deleteMany({ where: { resumeId } }),
     prisma.resumeBlock.createMany({
-      data: blocks.flatMap((block) => {
+      data: blocks.flatMap((block): Prisma.ResumeBlockCreateManyInput[] => {
         const type = toPrismaBlockType(block.type);
         if (!type) return [];
-        return [{
-          resumeId,
-          type,
-          order: block.order,
-          content: toInputJson(block.content)
-        }];
+        return [
+          {
+            resumeId,
+            type,
+            order: block.order,
+            content: toInputJson(block.content)
+          }
+        ];
       })
     })
   ]);
