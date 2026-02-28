@@ -1,24 +1,16 @@
-import { prisma } from "@/lib/prisma";
 import { AnalyticsDashboard } from "@/components/dashboard/analytics-dashboard";
 import { getActiveUserId } from "@/lib/active-user";
-import { hasDatabase } from "@/lib/runtime";
 import { localListResumes } from "@/lib/local-store";
 
 export default async function AnalyticsPage() {
   const userId = await getActiveUserId();
-  const resumes = hasDatabase
-    ? await prisma.resume.findMany({
-        where: { userId },
-        select: { id: true, title: true, viewCount: true, isPublished: true, createdAt: true },
-        orderBy: { viewCount: "desc" }
-      })
-    : localListResumes(userId).map((r) => ({
-        id: r.id,
-        title: r.title,
-        viewCount: r.viewCount,
-        isPublished: r.isPublished,
-        createdAt: r.updatedAt
-      }));
+  const resumes = localListResumes(userId).map((r) => ({
+    id: r.id,
+    title: r.title,
+    viewCount: r.viewCount,
+    isPublished: r.isPublished,
+    createdAt: r.updatedAt
+  }));
   const totalViews = resumes.reduce((sum, r) => sum + r.viewCount, 0);
 
   return (
